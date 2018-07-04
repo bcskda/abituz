@@ -1,0 +1,6 @@
+{% extends 'base.html' %}
+{% block content %}
+	{% for student in students %}
+		{% include 'student_item.html' %}
+	{% endfor %}
+{% endblock %}

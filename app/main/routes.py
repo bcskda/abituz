@@ -10,7 +10,7 @@ def redirect_to_index():
 
 @bp.route('/index')
 def index():
-	return render_template('index.html')
+	return render_template('index.html', title='Home')
 
 @bp.route('/count/<name>')
 def count(name):
@@ -19,9 +19,9 @@ def count(name):
 		count = len(student.applications)
 	except NoResultFound:
 		count = None
-	return render_template('count.html', name=name, count=count)
+	return render_template('count.html', title='Count', name=name, count=count)
 
-@bp.route('/list/by_student')
-def list_all_by_student():
+@bp.route('/students')
+def students_all():
 	students = Student.query.all()
-	return render_template('list_by_student.html', students=students)
+	return render_template('students.html', title='All students', students=students)
