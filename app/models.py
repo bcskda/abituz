@@ -38,7 +38,7 @@ class Student(db.Model):
 	__tablename__ = 'student'
 	id = db.Column(db.Integer, primary_key=True)
 	name = db.Column(db.String(100), nullable=False, index=True)
-	applications = db.relationship("Application", back_populates="student", lazy='dynamic')
+	applications = db.relationship("Application", back_populates="student")
 
 class University(db.Model):
 	__tablename__ = 'university'
@@ -51,7 +51,7 @@ class Faculty(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	university_id = db.Column(db.Integer, db.ForeignKey('university.id'))
 	name = db.Column(db.String(100), nullable=False)
-	university = db.relationship("University", back_populates="faculties", lazy='dynamic')
+	university = db.relationship("University", back_populates="faculties")
 	applications = db.relationship("Application", back_populates="faculty", lazy='dynamic')
 
 class Program(db.Model):
@@ -59,4 +59,4 @@ class Program(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	code = db.Column(db.String(11), nullable=False, index=True)
 	name = db.Column(db.String(20), nullable=False)
-	applications = db.relationship("Application", back_populates="program", lazy='dynamic')
+	applications = db.relationship("Application", back_populates="program")
