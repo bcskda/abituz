@@ -20,3 +20,8 @@ def count(name):
 	except NoResultFound:
 		count = None
 	return render_template('count.html', name=name, count=count)
+
+@bp.route('/list/by_student')
+def list_all_by_student():
+	students = Student.query.all()
+	return render_template('list_by_student.html', students=students)
