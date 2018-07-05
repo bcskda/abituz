@@ -3,6 +3,6 @@
 	<div>{{ application.faculty.university.name }} - 
 		{{ application.faculty.name }} -
 		{{ application.program.name }}
-		({{ application.program.code }})</div>
-	<hr>
+		({{ application.program.code }}):
+		{{ application.exam_results() }}</div>
 {% endfor %}
