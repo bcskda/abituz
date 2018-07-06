@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block content %}
+	{% if name != None %}
+		{% if count != None %}
+		<div>Student <i>{{ name }}</i> has made {{ count }} applications so far</div>
+		{% else %}
+		<div>Student <i>{{ name }}</i> not found in the database</div>
+		{% endif%}
+	{% endif %}
+{% endblock %}

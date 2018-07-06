@@ -1,8 +1,12 @@
 <h4>{{ student.name }}</h4>
-{% for application in student.applications %}
-	<div>{{ application.faculty.university.name }} - 
-		{{ application.faculty.name }} -
-		{{ application.program.name }}
-		({{ application.program.code }}):
+{% if student.applications != [] %}
+	{% for application in student.applications %}
+		<div class='application'>{{ application.faculty.university.name }} - 
+			{{ application.faculty.name }} -
+			{{ application.program.name }}
+			({{ application.program.code }}):
 		{{ application.exam_results() }}</div>
-{% endfor %}
+	{% endfor %}
+{% else %}
+	<div>No applications so far</div>
+{% endif %}
