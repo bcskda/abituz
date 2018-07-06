@@ -1,0 +1,32 @@
+version: "3"
+services:
+  app-view:
+    image: libsamplerate/abituz
+    restart: on-failure
+    networks:
+      webnet:
+    ports:
+      - "8000:5000"
+    environment:
+      DATABASE_URL: mysql://abituz:<pass>@db/abituz
+  db:
+    image: mariadb
+    restart: on-failure
+    networks:
+      webnet:
+    volumes:
+      - dbdata:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: <root pass>
+      MYSQL_USER: abituz
+      MYSQL_PASSWORD: <pass>
+      MYSQL_DATABASE: abituz
+networks:
+  webnet:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.239.0/24
+volumes:
+  abituz-dbdata:
