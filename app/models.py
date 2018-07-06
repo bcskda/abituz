@@ -70,6 +70,8 @@ class Application(db.Model):
 			self.without_exam = True
 		if o['revoked']:
 			self.is_revoked = True
+		if o['last_seen']:
+			self.last_seen = o['last_seen']
 
 	def exam_results(self):
 		result = '{} {}'.format(self.exam_1, self.score_1)

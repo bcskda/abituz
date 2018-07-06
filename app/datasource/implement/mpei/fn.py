@@ -24,46 +24,49 @@ def applications(text, count=3):
 		yield parse_application(s.group(1), count)
 	return None
 
+def handle_application(a, fac, prog):
+	try:
+		student = Student.query.filter_by(name=a['name']).one()
+	except NoResultFound:
+		student = Student(name=a['name'])
+		db.session.add(student)
+	application = Application.query.get((student.id, fac.id, prog.id,
+		datasource.id))
+	if not application:
+		application = Application(student=student, faculty=fac, program=prog,
+			datasource=datasource)
+	application.from_dict(a)
+
 def update(debug=False):
 	if debug:
-		print(university.name, 'with total pages:', len(pages))
-	for num, page in enumerate(pages):
-		faculty = Faculty.query.filter_by(university=university, name=page[0]).one()
-		program = Program.query.filter_by(code=page[1]).one()
-		text = requests.get(url_base.format(num + 1)).text
-		time = get_time(text) # TODO self.last_update
-		exams = get_exams(text)
+		print(university.name, 'with total page groups:', len(pages))
+	for page_group_num,page_group in enumerate(pages):
+		faculty = Faculty.query.filter_by(university=university, name=page_group[0]).one()
+		program = Program.query.filter_by(code=page_group[1]).one()
 		applications_count = 0
-		for table in re.finditer(pat_table, text):
-			unsaved_count = 0
-			for a in applications(text[table.start():table.end()], count=len(exams)):
-				try:
-					a['without_exam'] = table.group(1) == without_exam
-					a['revoked'] = revoked in a['notes']
-					a['last_seen'] = time
-					for i,exam in enumerate(exams):
-						a['exam_{}'.format(i + 1)] = exam
+		for page_num in page_group[3]:
+			text = requests.get(url_base.format(page_num)).text
+			time = get_time(text)
+			exams = get_exams(text)
+			for table in re.finditer(pat_table, text):
+				for a in applications(table.group(0), count=len(exams)):
 					try:
-						student = Student.query.filter_by(name=a['name']).one()
-					except NoResultFound:
-						student = Student(name=a['name'])
-						db.session.add(student)
-					application = Application.query.get((student.id, faculty.id,
-						program.id, datasource.id))
-					if not application:
-						application = Application(student=student, faculty=faculty,
-							program=program, datasource=datasource)
-					application.from_dict(a)
-					application.last_update = time
-					applications_count += 1
-				except Exception as e:
-					print(__name__, ' Unhandled exception:', e)
-					db.session.rollback()
-					datasource.is_failing = True
+						a['without_exam'] = table.group(1) == str_without_exam
+						a['last_seen'] = datetime.strptime(time, time_fmt)
+						a['revoked'] = str_revoked in a['notes']
+						for i,exam in enumerate(exams):
+							a['exam_{}'.format(i + 1)] = exam
+						ident = (faculty.id, program.id, datasource.id)
+						handle_application(a, faculty, program)
+						applications_count += 1
+					except Exception as e:
+						print(__name__, ' Unhandled exception:', e)
+						db.session.rollback()
+						datasource.is_failing = True
 			datasource.last_update = datetime.utcnow()
 			db.session.commit()
 		if debug:
-			print('Page #', num + 1, faculty.name, program.code, program.name,
+			print('#', page_group_num, faculty.name, program.code, program.name,
 				time, exams, 'with {} applications'.format(applications_count))
-		datasource.is_failing = False
-		db.session.commit()
+	datasource.is_failing = False
+	db.session.commit()
