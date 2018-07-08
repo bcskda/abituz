@@ -2,7 +2,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from app import db
 from app.models import Datasource, University, Faculty, Program
 from app.datasource import enabled_sources
-from app.datasource.implement.mpei.const import *
+from .const import *
 
 try:
 	datasource = Datasource.query.filter_by(name=dsname).one()
@@ -25,5 +25,5 @@ if not datasource.is_init:
 else:
 	university = University.query.filter_by(name=uniname).one()
 
-from app.datasource.implement.mpei.fn import update
+from .fn import update
 enabled_sources[dsname] = update
