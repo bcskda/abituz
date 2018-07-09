@@ -77,9 +77,14 @@ class ContextTimerCaller(TimerCaller):
 
 	Arguments:
 		app (:obj:`Flask`) - Flask application object providing the context.
+
+	Raises:
+		ValueError: when app is None.
 	"""
 
 	def __init__(self, app, *args, **kwargs):
+		if not app:
+			raise ValueError
 		print('ContextTimerCaller.__init__()', args, kwargs)
 		super(ContextTimerCaller, self).__init__(*args, **kwargs)
 		self.app = app
@@ -97,6 +102,17 @@ class ExecuteSupervisor(ContextTimerCaller):
 	by a call to :meth:`init_app`.
 	"""
 	def init_app(self, app, *args, **kwargs):
+		"""Flask ext-style init.
+
+		Example:
+			>>> supervisor = ExecuteSupervisor()
+			>>> app = create_app()
+			>>> supervisor.init_app(app, interval, notify, some_user,
+				some_message, count=3)
+
+				Same as example for :meth:`__init__` but initialized by
+				call to init_app().
+		"""
 		print('ExecuteSupervisor.init_app()', args, kwargs)
 		super(ExecuteSupervisor, self).__init__(app, *args, **kwargs)
 		self.start()
@@ -105,20 +121,13 @@ class ExecuteSupervisor(ContextTimerCaller):
 		"""Arguments:
 			app (:obj:`Flask`) - Flask application object.
 
-		Examples:
+		Example:
 			>>> supervisor = ExecuteSupervisor(app, interval, notify, some_user,
 				some_message, count=3)
 
 				Initialized instantly.
 				interval, notify, count will be passed to ContextTimerCaller.
 				some_user, some_message will be passed to notify() at calls.
-
-			>>> supervisor = ExecuteSupervisor()
-			>>> app = create_app()
-			>>> supervisor.init_app(app, interval, notify, some_user,
-				some_message, count=3)
-
-				Same but initialized by call to init_app().
 		"""
 		print('ExecuteSupervisor.__init__()', args, kwargs)
 		if app:
