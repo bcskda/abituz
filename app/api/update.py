@@ -13,7 +13,7 @@ def do_update():
 		result['error'] = -1
 		result['error_explain'] = 'update in progress'
 		return jenc(result)
-	update_all(debug=app.config['DEBUG'])
+	update_all()
 	now = datetime.utcnow()
 	delta = now - start_time
 	result['finished_at'] = now.isoformat()
