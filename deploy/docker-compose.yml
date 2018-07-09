@@ -9,6 +9,8 @@ services:
       - "8000:5000"
     environment:
       DATABASE_URL: mysql://abituz:<pass>@db/abituz
+      APP_UPDATE_AUTO: 1
+      APP_UPDATE_SECS: 1800
   db:
     image: mariadb
     restart: on-failure

@@ -1,3 +1,6 @@
+"""Re-usable utils for asynchronous stuff."""
+
+
 from threading import Lock, Thread
 from time import process_time, sleep
 from functools import wraps
@@ -66,7 +69,7 @@ class TimerCaller(object):
 				self.count -= 1
 
 	def start(self):
-		"""Start the caller thread"""
+		"""Start the call-in-loop thread."""
 		if not self._started:
 			self._started = True
 			print('TimerCaller.start()')
