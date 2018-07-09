@@ -4,7 +4,29 @@ from sqlalchemy.orm.exc import NoResultFound
 from app.models import *
 from .regex import *
 from .const import *
-from . import university, datasource
+
+def setup() -> (Datasource, University):
+	try:
+		datasource = Datasource.query.filter_by(name=dsname).one()
+	except NoResultFound:
+		datasource = Datasource(name=dsname)
+		db.session.add(datasource)
+		db.session.commit()
+
+	if not datasource.is_init:
+		university = University(name=uniname)
+		db.session.add(university)
+		fac_names = set(map(lambda x: x[0], pages[1:]))
+		faculties = [Faculty(name=x, university=university) for x in fac_names]
+		db.session.add_all(faculties)
+		for x in pages:
+			if not Program.query.filter_by(code=x[1]).one_or_none():
+				db.session.add(Program(code=x[1], name=x[2]))
+		datasource.is_init = True
+		db.session.commit()
+	else:
+		university = University.query.filter_by(name=uniname).one()
+	return datasource, university
 
 def get_time(text):
 	return re.search(pat_time, text).group(1)
@@ -24,20 +46,20 @@ def applications(text, count=3):
 		yield parse_application(s.group(1), count)
 	return None
 
-def handle_application(a, fac, prog):
+def handle_application(a, fac, prog, ds):
 	try:
 		student = Student.query.filter_by(name=a['name']).one()
 	except NoResultFound:
 		student = Student(name=a['name'])
 		db.session.add(student)
-	application = Application.query.get((student.id, fac.id, prog.id,
-		datasource.id))
+	application = Application.query.get((student.id, fac.id, prog.id, ds.id))
 	if not application:
 		application = Application(student=student, faculty=fac, program=prog,
-			datasource=datasource)
+			datasource=ds)
 	application.from_dict(a)
 
 def update(debug=False):
+	datasource, university = setup()
 	if debug:
 		print(university.name, 'with total page groups:', len(pages))
 	for page_group_num,page_group in enumerate(pages):
@@ -57,7 +79,7 @@ def update(debug=False):
 						for i,exam in enumerate(exams):
 							a['exam_{}'.format(i + 1)] = exam
 						ident = (faculty.id, program.id, datasource.id)
-						handle_application(a, faculty, program)
+						handle_application(a, faculty, program, datasource)
 						applications_count += 1
 					except Exception as e:
 						print(__name__, ' Unhandled exception:', e)
