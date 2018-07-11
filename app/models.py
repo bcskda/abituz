@@ -27,14 +27,14 @@ class Application(db.Model):
 	program_id    = db.Column(db.Integer, db.ForeignKey('program.id'), primary_key=True)
 	datasource_id = db.Column(db.Integer, db.ForeignKey('datasource.id'), primary_key=True)
 
-	exam_1 = db.Column(db.String(10), nullable=False)
+	exam_1 = db.Column(db.String(10))
 	exam_2 = db.Column(db.String(10))
 	exam_3 = db.Column(db.String(10))
 	exam_4 = db.Column(db.String(10))
 	exam_5 = db.Column(db.String(10))
 	exam_6 = db.Column(db.String(10))
 
-	score_1 = db.Column(db.Integer, default=0)
+	score_1 = db.Column(db.Integer)
 	score_2 = db.Column(db.Integer)
 	score_3 = db.Column(db.Integer)
 	score_4 = db.Column(db.Integer)
@@ -175,7 +175,7 @@ class Program(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 
 	code = db.Column(db.String(11), nullable=False, index=True)
-	name = db.Column(db.String(20), nullable=False)
+	name = db.Column(db.String(100), nullable=False)
 
 	applications = db.relationship("Application", back_populates="program")
 
@@ -215,4 +215,4 @@ class Datasource(db.Model):
 	is_failing = db.Column(db.Boolean, nullable=True, default=None)
 	is_init = db.Column(db.Boolean, default=False)
 
-	applications = db.relationship("Application", back_populates="datasource", lazy='dynamic')
+	applications = db.relationship("Application", back_populates="datasource", lazy='select')

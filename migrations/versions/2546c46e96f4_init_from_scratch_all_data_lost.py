@@ -1,8 +1,8 @@
-"""models
+"""init from scratch, all data lost
 
-Revision ID: 25fcac182dba
+Revision ID: 2546c46e96f4
 Revises: 
-Create Date: 2018-07-05 14:09:46.170075
+Create Date: 2018-07-11 18:18:37.514501
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '25fcac182dba'
+revision = '2546c46e96f4'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -29,7 +29,7 @@ def upgrade():
     op.create_table('program',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('code', sa.String(length=11), nullable=False),
-    sa.Column('name', sa.String(length=20), nullable=False),
+    sa.Column('name', sa.String(length=100), nullable=False),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_program_code'), 'program', ['code'], unique=False)
@@ -56,14 +56,18 @@ def upgrade():
     sa.Column('faculty_id', sa.Integer(), nullable=False),
     sa.Column('program_id', sa.Integer(), nullable=False),
     sa.Column('datasource_id', sa.Integer(), nullable=False),
-    sa.Column('exam_1', sa.String(length=10), nullable=False),
+    sa.Column('exam_1', sa.String(length=10), nullable=True),
     sa.Column('exam_2', sa.String(length=10), nullable=True),
     sa.Column('exam_3', sa.String(length=10), nullable=True),
     sa.Column('exam_4', sa.String(length=10), nullable=True),
+    sa.Column('exam_5', sa.String(length=10), nullable=True),
+    sa.Column('exam_6', sa.String(length=10), nullable=True),
     sa.Column('score_1', sa.Integer(), nullable=True),
     sa.Column('score_2', sa.Integer(), nullable=True),
     sa.Column('score_3', sa.Integer(), nullable=True),
     sa.Column('score_4', sa.Integer(), nullable=True),
+    sa.Column('score_5', sa.Integer(), nullable=True),
+    sa.Column('score_6', sa.Integer(), nullable=True),
     sa.Column('score_extra', sa.Integer(), nullable=True),
     sa.Column('without_exam', sa.Boolean(), nullable=True),
     sa.Column('is_revoked', sa.Boolean(), nullable=True),

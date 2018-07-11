@@ -2,6 +2,5 @@ flask
 flask-sqlalchemy
 flask-migrate
 
-## bcskda/abituz docker:
-# mysqlclient
-# gunicorn
+## datasource requirements:
+requests

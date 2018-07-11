@@ -78,6 +78,8 @@ def update(debug=False):
 						a['revoked'] = str_revoked in a['notes']
 						for i,exam in enumerate(exams):
 							a['exam_{}'.format(i + 1)] = exam
+							if a['score_{}'.format(i + 1)] == '':
+								a['score_{}'.format(i + 1)] = None
 						ident = (faculty.id, program.id, datasource.id)
 						handle_application(a, faculty, program, datasource)
 						applications_count += 1
