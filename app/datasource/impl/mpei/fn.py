@@ -87,8 +87,8 @@ def update(debug=False):
 						print(__name__, ' Unhandled exception:', e)
 						db.session.rollback()
 						datasource.is_failing = True
-			datasource.last_update = datetime.utcnow()
-			db.session.commit()
+		datasource.last_update = datetime.utcnow()
+		db.session.commit()
 		if debug:
 			print('#', page_group_num, faculty.name, program.code, program.name,
 				time, exams, 'with {} applications'.format(applications_count))

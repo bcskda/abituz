@@ -1,5 +1,6 @@
 from app import create_app, db
 from app.models import *
+import click
 
 app = create_app()
 
@@ -10,3 +11,9 @@ def make_shell_context():
 		'Student': Student, 'University': University,
 		'Faculty': Faculty, 'Program': Program
 	}
+
+@app.cli.command()
+@click.option('--debug/--no-debug', default=False)
+def ds_update(debug):
+	from app.update import update_all
+	update_all(debug=debug)

@@ -53,6 +53,7 @@ class UpdateSupervisor(async.ExecuteSupervisor):
 	def init_app(self, app, *args, **kwargs):
 		"""Overrides ExecuteSupervisor`s :meth:`init_app` to get configuration
 			from the app object and pass it to ContextTimerCaller."""
+		print('WARNING: deprecated. Consider using `flask ds_update instead.`')
 		print('UpdateSupervisor.init_app()', args, kwargs)
 		interval=app.config['APP_UPDATE_SECS']
 		fn = update_all
