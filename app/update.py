@@ -13,8 +13,9 @@ from app.datasource import enabled_sources
 _update_lock = Lock()
 try:
 	_last_update = db.session.query(func.max(Datasource.last_update))
-except RuntimeError:
-	print('Possibly out of context, ignoring') # Maybe it`s wrong
+except RuntimeError as e:
+	print('app.update imported out of context') # Maybe it`s wrong
+	raise e
 
 def is_updating():
 	return _update_lock.locked()
@@ -46,18 +47,12 @@ def update_all(debug=False):
 	print(__name__, last_update.isoformat(),
 		'Update finished')
 
-class UpdateSupervisor(async.ExecuteSupervisor):
+class UpdateSupervisor(async.TimerCaller):
 	"""Class to supervise data updates in a separate thread.
 	TODO make singleton.
 	"""
-	def init_app(self, app, *args, **kwargs):
-		"""Overrides ExecuteSupervisor`s :meth:`init_app` to get configuration
+	def __init__(self, interval, *args, **kwargs):
+		"""Overrides ExecuteSupervisor`s :meth:`__init__` to get configuration
 			from the app object and pass it to ContextTimerCaller."""
-		print('WARNING: deprecated. Consider using `flask ds_update instead.`')
-		print('UpdateSupervisor.init_app()', args, kwargs)
-		interval=app.config['APP_UPDATE_SECS']
-		fn = update_all
-		if app.config['DEBUG']:
-			kwargs['debug'] = True
-		super(UpdateSupervisor, self).init_app(app, interval, fn, None, *args, **kwargs)
+		super(UpdateSupervisor, self).__init__(interval, update_all, None, *args, **kwargs)
 		self.start()

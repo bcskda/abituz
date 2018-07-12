@@ -40,8 +40,7 @@ class WithLock(object):
 		return wrapper
 
 class TimerCaller(object):
-	"""Class to execute a callable in a separate thread with a fixed time
-	interval.
+	"""Class to execute a callable with a fixed time interval.
 
 	Arguments:
 		fn (callable): the callable to execute. The return value is discarded.
@@ -51,7 +50,6 @@ class TimerCaller(object):
 		count (:obj:`int`): times fn will be called. If None, loop forever.
 	"""
 	def __init__(self, interval, fn, count, *args, **kwargs):
-		print('TimerCaller.__init__()', args, kwargs)
 		super(TimerCaller, self).__init__()
 		self.interval = interval
 		self.fn = fn
@@ -60,78 +58,10 @@ class TimerCaller(object):
 		self.kwargs = kwargs
 		self._started = False
 
-	def _run(self):
-		print('TimerCaller.run()')
+	def start(self):
+		"""Start the call-in-loop thread."""
 		while self.count != 0:
 			self.fn(*self.args, **self.kwargs)
 			sleep(self.interval)
 			if self.count:
 				self.count -= 1
-
-	def start(self):
-		"""Start the call-in-loop thread."""
-		if not self._started:
-			self._started = True
-			print('TimerCaller.start()')
-			Thread(target=self._run).start()
-
-class ContextTimerCaller(TimerCaller):
-	"""A subclass of TimerCaller to execute fn in app context.
-
-	Arguments:
-		app (:obj:`Flask`) - Flask application object providing the context.
-
-	Raises:
-		ValueError: when app is None.
-	"""
-
-	def __init__(self, app, *args, **kwargs):
-		if not app:
-			raise ValueError
-		print('ContextTimerCaller.__init__()', args, kwargs)
-		super(ContextTimerCaller, self).__init__(*args, **kwargs)
-		self.app = app
-
-
-	def _run(self):
-		print('ContextTimerCaller.run()')
-		with self.app.app_context():
-			super(ContextTimerCaller, self)._run()
-
-class ExecuteSupervisor(ContextTimerCaller):
-	"""Class to supervise periodic calls to a callable in a separate thread.
-
-	The interface is inspired by Flask extentions. Allows delayed initialization
-	by a call to :meth:`init_app`.
-	"""
-	def init_app(self, app, *args, **kwargs):
-		"""Flask ext-style init.
-
-		Example:
-			>>> supervisor = ExecuteSupervisor()
-			>>> app = create_app()
-			>>> supervisor.init_app(app, interval, notify, some_user,
-				some_message, count=3)
-
-				Same as example for :meth:`__init__` but initialized by
-				call to init_app().
-		"""
-		print('ExecuteSupervisor.init_app()', args, kwargs)
-		super(ExecuteSupervisor, self).__init__(app, *args, **kwargs)
-		self.start()
-
-	def __init__(self, app=None, *args, **kwargs):
-		"""Arguments:
-			app (:obj:`Flask`) - Flask application object.
-
-		Example:
-			>>> supervisor = ExecuteSupervisor(app, interval, notify, some_user,
-				some_message, count=3)
-
-				Initialized instantly.
-				interval, notify, count will be passed to ContextTimerCaller.
-				some_user, some_message will be passed to notify() at calls.
-		"""
-		print('ExecuteSupervisor.__init__()', args, kwargs)
-		if app:
-			self.init_app(app, *args, **args)
