@@ -9,7 +9,16 @@ services:
       - "8000:5000"
     environment:
       DATABASE_URL: mysql://abituz:<pass>@db/abituz
-      APP_UPDATE_AUTO: 0
+      APP_ROLE: view
+  app-update:
+    image: bcskda/abituz
+    restart: on-failure
+    networks:
+      webnet:
+    environment:
+      DATABASE_URL: mysql://abituz:<pass>@db/abituz
+      APP_ROLE: update
+      APP_UPDATE_TIMER: 1
       APP_UPDATE_SECS: 1800
   db:
     image: mariadb

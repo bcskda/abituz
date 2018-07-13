@@ -6,19 +6,22 @@ WORKDIR /home/app
 EXPOSE 5000
 ENTRYPOINT ["./boot.sh"]
 
-COPY abituz.py deploy/requirements.txt deploy/boot.sh deploy/update.sh ./
+COPY deploy/requirements.txt ./
 RUN apk add --update mariadb-dev gcc musl-dev \
  && python -m venv venv \
  && venv/bin/pip install -r requirements.txt \
  && venv/bin/pip install gunicorn mysqlclient \
- && chmod +x boot.sh \
- && chmod +x update.sh \
  && chown -R app:app ./ \
  && apk del gcc musl-dev \
  && rm -fr /var/cache/apk/*
 
+COPY deploy/boot.sh deploy/update.sh ./
+RUN chmod +x boot.sh update.sh
+
 USER app
 ENV FLASK_APP abituz.py
+ENV PYTHONUNBUFFERED 1
 
+COPY abituz.py ./
 COPY app app
 COPY migrations migrations

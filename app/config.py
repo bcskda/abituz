@@ -8,7 +8,7 @@ class Config(object):
 
 	SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-	APP_UPDATE_AUTO = (os.environ.get('APP_UPDATE_AUTO') not in [None, '0']) or \
+	APP_UPDATE_TIMER = (os.environ.get('APP_UPDATE_TIMER') not in [None, '0']) or \
 		False
 
 	APP_UPDATE_SECS = int(os.environ.get('APP_UPDATE_SECS') or \
