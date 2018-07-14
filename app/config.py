@@ -8,6 +8,9 @@ class Config(object):
 
 	SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+	if os.environ.get('DATABASE_POOL_RECYCLE') != None:
+		SQLALCHEMY_POOL_RECYCLE = int(os.environ.get('DATABASE_POOL_RECYCLE'))
+
 	APP_UPDATE_TIMER = (os.environ.get('APP_UPDATE_TIMER') not in [None, '0']) or \
 		False
 

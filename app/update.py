@@ -33,9 +33,8 @@ def update_all(debug=False):
 	print(__name__, datetime.utcnow().isoformat(),
 		'Update started')
 	for ds,fn in enabled_sources.items():
-		if debug:
-			print(__name__, datetime.utcnow().isoformat(),
-				'call update on datasource {}...'.format(ds))
+		print(__name__, datetime.utcnow().isoformat(),
+			'started datasource', ds)
 		try:
 			fn(debug=debug)
 		except Exception as e:

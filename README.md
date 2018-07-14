@@ -24,12 +24,16 @@ $ source venv/bin/activate
 (venv) $ export FLASK_APP=abituz.py
 (venv) $ flask run
 ```
-Настройки через переменные среды - см. `app/config.py`.
+Переменные среды - см. `app/config.py`. Аргументы командной строки - см. `abituz.py`.
+
 Также в `app/deploy` есть Dockerfile и пример конфига docker-compose.
 Также есть готовый *толстый* docker-образ: [bcskda/abituz](https://hub.docker.com/r/bcskda/abituz/)
 
-### Как запросить обновление данных?
-POST на `/api/update`. Заблокируется до завершения обновления, если оно ещё не начато.
+### Как обновить данные?
+```
+(venv) $ export FLASK_APP=abituz.py
+(venv) $ flask ds_update
+```
 
 ### Какие источники уже есть?
 МЭИ.

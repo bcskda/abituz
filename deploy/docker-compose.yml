@@ -9,6 +9,10 @@ services:
       - "8000:5000"
     environment:
       DATABASE_URL: mysql://abituz:<pass>@db/abituz
+      # Uncomment the following line if you use MariaDB on Debian
+      # (has default wait_timeout set to 600)
+      #
+      # DATABASE_POOL_RECYCLE: 600
       APP_ROLE: view
   app-update:
     image: bcskda/abituz
@@ -17,6 +21,10 @@ services:
       webnet:
     environment:
       DATABASE_URL: mysql://abituz:<pass>@db/abituz
+      # Uncomment the following line if you use MariaDB on Debian
+      # (has default wait_timeout set to 600)
+      #
+      # DATABASE_POOL_RECYCLE: 600
       APP_ROLE: update
       APP_UPDATE_TIMER: 1
       APP_UPDATE_SECS: 1800
