@@ -24,7 +24,7 @@ $ source venv/bin/activate
 (venv) $ export FLASK_APP=abituz.py
 (venv) $ flask run
 ```
-Переменные среды - см. `app/config.py`. Аргументы командной строки - см. `abituz.py`.
+Переменные среды - см. `app/config.py`. Аргументы командной строки - см. `flask ds --help`.
 
 Также в `app/deploy` есть Dockerfile и пример конфига docker-compose.
 Также есть готовый *толстый* docker-образ: [bcskda/abituz](https://hub.docker.com/r/bcskda/abituz/)
@@ -32,16 +32,19 @@ $ source venv/bin/activate
 ### Как обновить данные?
 ```
 (venv) $ export FLASK_APP=abituz.py
-(venv) $ flask ds_update
+(venv) $ flask ds update --timer -i 3600     # Обновляться в цикле раз в час
+(venv) $ APP_UPDATE_TIMER=1 flask ds update  # То же самое, но через переменные среды
+(venv) $ flask ds update                     # Обновить один раз
 ```
 
 ### Какие источники уже есть?
-МЭИ.
+МЭИ, МИФИ.
 
 ### Как добавить источник?
-Добавить модуль в `app/datasource/impl` и зарегистрировать в `app.datasource.enabled_sources`.
-В качестве образца можно использовать `mpei`.
-Всё, что нужно для источников, кажется, достаточно документировано в коде.
+Добавить модуль в `app/datasource/impl` и обновляющую функцию в `app.datasource.enabled_sources`.
+В качестве образца можно использовать имеющиеся источники.
+Всё, что нужно, кажется, достаточно документировано в коде.
+Для тестов можно использовать `flask ds test`.
 
 ### РКН не накажет?
 Не должен, т.к. все списки находятся в свободном доступе, но это не точно.
