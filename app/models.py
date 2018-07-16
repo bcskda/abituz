@@ -77,7 +77,9 @@ class Application(db.Model):
 		if 'last_seen' in o: self.last_seen = o['last_seen']
 
 	def exam_results(self):
-		result = '{} {}'.format(self.exam_1, self.score_1)
+		result = ''
+		if self.exam_1:
+			result += '{} {}'.format(self.exam_1, self.score_1)
 		if self.exam_2:
 			result += ', {} {}'.format(self.exam_2, self.score_2)
 		if self.exam_3:
@@ -88,7 +90,10 @@ class Application(db.Model):
 			result += ', {} {}'.format(self.exam_5, self.score_5)
 		if self.exam_6:
 			result += ', {} {}'.format(self.exam_6, self.score_6)
-		result += ', {} {}'.format('ИД', self.score_6)
+		if result:
+			result += ', '
+		result += 'Total {}'.format(self.score_sum)
+		result += ', {} {}'.format('ИД', self.score_extra)
 		return result
 
 class Student(db.Model):

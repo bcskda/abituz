@@ -39,7 +39,30 @@ def parse_application(text, count):
 	field_values = map(
 		lambda x: x.group(1),
 		re.finditer(pat_field, text))
-	return dict(zip(student_fields[count], field_values))
+	a = dict(zip(student_fields[count], field_values))
+	all_scores_null = True
+	for i in range(1, count + 1): # '118' -> 118, '' -> None
+		key = 'score_{}'.format(i)
+		score = a[key]
+		if score != '':
+			a[key] = int(score)
+			all_scores_null = False
+		else:
+			a[key] = None
+	if a['score_extra'] != '':
+		a['score_extra'] = int(a['score_extra'])
+	else:
+		a['score_extra'] = None
+	if a['score_sum'] == '':
+		if not all_scores_null:
+			a['score_sum'] = 0
+			for i in range(1, count + 1):
+				score = a['score_{}'.format(i)]
+				a['score_sum'] += score or 0
+			a['score_sum'] += a['score_extra'] or 0
+		else:
+			a['score_sum'] = None
+	return a
 
 def applications(text, count=3):
 	for s in re.finditer(pat_student, text):

@@ -89,8 +89,6 @@ def update(debug=False):
 			try:
 				if match.group(1) in class_group: # Group starts
 					group_name = get_group(match.group(2))
-					if debug:
-						print('Group', group_name)
 				elif match.group(1) in class_entry: # Student entry
 					fields = re.findall(pat_student_fields, match.group(2))
 					a = application_dict(fields)
