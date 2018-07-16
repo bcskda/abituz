@@ -80,17 +80,16 @@ def update(debug=False):
 							a['exam_{}'.format(i + 1)] = exam
 							if a['score_{}'.format(i + 1)] == '':
 								a['score_{}'.format(i + 1)] = None
-						ident = (faculty.id, program.id, datasource.id)
 						handle_application(a, faculty, program, datasource)
 						applications_count += 1
 					except Exception as e:
-						print(__name__, ' Unhandled exception:', e)
+						print(__name__, 'Unhandled exception:', e)
 						db.session.rollback()
 						datasource.is_failing = True
-		datasource.last_update = datetime.utcnow()
 		db.session.commit()
 		if debug:
 			print('#', page_group_num, faculty.name, program.code, program.name,
 				time, exams, 'with {} applications'.format(applications_count))
+	datasource.last_update = datetime.utcnow()
 	datasource.is_failing = False
 	db.session.commit()

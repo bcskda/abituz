@@ -40,9 +40,11 @@ class Application(db.Model):
 	score_4 = db.Column(db.Integer)
 	score_5 = db.Column(db.Integer)
 	score_6 = db.Column(db.Integer)
+	score_sum = db.Column(db.Integer)
 	score_extra = db.Column(db.Integer, default=0)
 	without_exam = db.Column(db.Boolean, default=False)
 
+	is_budget = db.Column(db.Boolean, default=True)
 	is_revoked = db.Column(db.Boolean, default=False)
 	last_seen = db.Column(db.DateTime, default=datetime.utcnow)
 	datasource = db.Column(db.String(20), nullable=True, index=True)
@@ -53,25 +55,26 @@ class Application(db.Model):
 	datasource = db.relationship("Datasource", back_populates="applications")
 
 	def from_dict(self, o):
-		self.exam_1 = o['exam_1']
+		if 'exam_1' in o: self.exam_1 = o['exam_1']
 		if 'exam_2' in o: self.exam_2 = o['exam_2']
 		if 'exam_3' in o: self.exam_3 = o['exam_3']
 		if 'exam_4' in o: self.exam_4 = o['exam_4']
 		if 'exam_5' in o: self.exam_5 = o['exam_5']
 		if 'exam_6' in o: self.exam_6 = o['exam_6']
-		self.score_1 = o['score_1']
+
+		if 'score_1' in o: self.score_1 = o['score_1']
 		if 'score_2' in o: self.score_2 = o['score_2']
 		if 'score_3' in o: self.score_3 = o['score_3']
 		if 'score_4' in o: self.score_4 = o['score_4']
 		if 'score_5' in o: self.score_5 = o['score_5']
 		if 'score_6' in o: self.score_6 = o['score_6']
+		if 'score_sum' in o: self.score_sum = o['score_sum']
 		if 'score_extra' in o: self.score_extra = o['score_extra']
-		if o['without_exam']:
-			self.without_exam = True
-		if o['revoked']:
-			self.is_revoked = True
-		if o['last_seen']:
-			self.last_seen = o['last_seen']
+
+		if 'without_exam' in o: self.without_exam = o['without_exam']
+		if 'budget' in o: self.is_budget = o['budget']
+		if 'revoked' in o: self.is_revoked = o['revoked']
+		if 'last_seen' in o: self.last_seen = o['last_seen']
 
 	def exam_results(self):
 		result = '{} {}'.format(self.exam_1, self.score_1)
